@@ -1,245 +1,124 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-interface BookInterfaceProps {
-  scrollProgress: number;
-}
+import { useMemo } from "react";
+import { motion } from "framer-motion";
 
 const wishes = [
   {
-    title: "To My Dearest",
+    title: "Gửi người con gái anh thương 💝",
     content:
-      "On this special day, I want to celebrate you and everything you bring into my life. Your strength, beauty, and kindness inspire me every single day.",
-    emoji: "💝",
+      "Cảm ơn em đã đến và khiến thế giới của anh dịu dàng hơn. Mỗi ngày bên em đều là món quà anh trân trọng.",
   },
   {
-    title: "Your Strength",
+    title: "Sức mạnh dịu dàng 🌷",
     content:
-      "You face every challenge with grace and determination. The way you handle difficulties with such poise and wisdom is truly remarkable. You are my inspiration.",
-    emoji: "💪",
+      "Em mạnh mẽ theo cách riêng của mình – bằng lòng tốt và nụ cười. Anh luôn muốn được che chở và sẻ chia cùng em.",
   },
   {
-    title: "Your Beauty",
+    title: "Vẻ đẹp từ trái tim ✨",
     content:
-      "Your beauty goes far beyond what meets the eye. It's in your smile, your laughter, your compassion, and the way you make everyone around you feel special.",
-    emoji: "✨",
+      "Em đẹp ở sự chân thành, ở ánh mắt biết nói, và ở cách em khiến người khác cảm thấy được yêu thương.",
   },
   {
-    title: "Your Impact",
+    title: "Dấu ấn của em 🌟",
     content:
-      "The positive impact you have on the world is immeasurable. You touch hearts, change lives, and make this world a better place just by being you.",
-    emoji: "🌟",
+      "Dù đi đến đâu, em cũng mang theo năng lượng tích cực. Cảm ơn em vì đã khiến cuộc sống của anh rực rỡ và ấm áp hơn.",
   },
   {
-    title: "My Promise",
+    title: "Lời hứa nhỏ 💕",
     content:
-      "I promise to always support you, celebrate your victories, and stand by you through every moment. You deserve all the happiness in the world.",
-    emoji: "💕",
+      "Anh hứa sẽ luôn lắng nghe, luôn ở bên, và yêu em bằng tất cả những gì anh có – hôm nay và cả sau này.",
   },
   {
-    title: "Forever Grateful",
+    title: "Biết ơn em 🌹",
     content:
-      "Thank you for being the amazing woman you are. Thank you for your love, your trust, and for letting me be part of your journey. Happy Women's Day!",
-    emoji: "🌹",
+      "Cảm ơn em đã để anh bước vào thế giới của em. Mong rằng mỗi ngày em đều nở nụ cười hạnh phúc.",
   },
 ];
 
-export default function BookInterface({ scrollProgress }: BookInterfaceProps) {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [isFlipping, setIsFlipping] = useState(false);
-
-  useEffect(() => {
-    if (scrollProgress < 0.2) {
-      setCurrentPage(0);
-    } else {
-      const pageProgress = (scrollProgress - 0.2) / 0.8;
-      const newPage = Math.floor(pageProgress * wishes.length);
-      if (newPage !== currentPage && newPage < wishes.length) {
-        setIsFlipping(true);
-        setTimeout(() => {
-          setCurrentPage(newPage);
-          setIsFlipping(false);
-        }, 400);
-      }
-    }
-  }, [scrollProgress, currentPage]);
-
-  const zoomProgress = Math.min(scrollProgress / 0.2, 1);
-  const scale = 1 - zoomProgress * 0.7;
-  const opacity = 1 - zoomProgress * 0.3;
-
-  const page = wishes[currentPage];
-  const progress =
-    scrollProgress < 0.2 ? 0 : ((scrollProgress - 0.2) / 0.8) * 100;
-
+function Sparkles({ count = 20 }: { count?: number }) {
+  const stars = useMemo(
+    () =>
+      new Array(count).fill(0).map((_, i) => ({
+        id: i,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        size: Math.random() * 6 + 2,
+        delay: Math.random() * 1.2,
+        dur: Math.random() * 1.2 + 1.2,
+      })),
+    [count],
+  );
   return (
-    <div className="relative w-full">
-      {/* Sticky book container */}
-      <div className="sticky top-1/2 -translate-y-1/2 flex flex-col items-center gap-12 w-full py-20">
-        <div
-          className="book-container w-full max-w-3xl"
-          style={{ transform: `scale(${scale})`, opacity }}
-        >
-          <div className="relative w-full aspect-video rounded-2xl book-shadow overflow-hidden group">
-            {/* Book spine effect */}
-            <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/30 via-primary/10 to-primary/30 z-20" />
-
-            <div className="absolute left-0 top-0 w-1/2 h-full bg-gradient-to-r from-primary/5 to-transparent book-inner-shadow" />
-
-            <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-primary/5 to-transparent" />
-
-            {/* Main content area with page flip effect */}
-            <div
-              className="w-full h-full flex items-center justify-center p-12 transition-all duration-500 relative"
-              style={{
-                background: `linear-gradient(135deg, rgba(184, 134, 134, 0.08) 0%, rgba(117, 107, 177, 0.08) 50%, rgba(120, 81, 169, 0.08) 100%)`,
-                transform: `perspective(1200px) rotateY(${isFlipping ? 90 : 0}deg)`,
-                opacity: isFlipping ? 0 : 1,
-              }}
-            >
-              <div className="text-center space-y-8 max-w-xl relative z-10">
-                <div className="text-6xl animate-float">{page.emoji}</div>
-                <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-secondary">
-                  {page.title}
-                </h2>
-                <p className="text-lg md:text-xl text-foreground/80 leading-relaxed">
-                  {page.content}
-                </p>
-              </div>
-            </div>
-
-            {/* Decorative corners */}
-            <div className="absolute top-4 left-4 w-6 h-6 border-t-2 border-l-2 border-primary/60 group-hover:border-primary transition-colors" />
-            <div className="absolute top-4 right-4 w-6 h-6 border-t-2 border-r-2 border-primary/60 group-hover:border-primary transition-colors" />
-            <div className="absolute bottom-4 left-4 w-6 h-6 border-b-2 border-l-2 border-primary/60 group-hover:border-primary transition-colors" />
-            <div className="absolute bottom-4 right-4 w-6 h-6 border-b-2 border-r-2 border-primary/60 group-hover:border-primary transition-colors" />
-
-            <div
-              className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-              style={{
-                boxShadow:
-                  "inset 0 0 30px rgba(184, 134, 134, 0.2), 0 0 30px rgba(184, 134, 134, 0.1)",
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Page indicator - only show after zoom completes */}
-        {scrollProgress >= 0.2 && (
-          <div className="w-full max-w-3xl space-y-4 animate-fade-in-up">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-foreground/60">
-                Reading Progress
-              </span>
-              <span className="text-sm font-semibold text-primary">
-                {Math.round(progress)}%
-              </span>
-            </div>
-            <div className="w-full h-1 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-primary via-accent to-secondary rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-
-            <div className="flex gap-3 justify-center pt-4">
-              {wishes.map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === currentPage
-                      ? "bg-gradient-to-r from-primary to-accent w-8"
-                      : "bg-primary/30 w-2 hover:bg-primary/50"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <p className="text-foreground/50 text-sm text-center mt-8">
-              {currentPage === wishes.length - 1
-                ? "You've reached the end. Thank you for reading! 💕"
-                : "Scroll to turn the page"}
-            </p>
-          </div>
-        )}
-      </div>
-
-      <div className="relative z-10 space-y-0 pt-96">
-        {wishes.map((wish, index) => (
+    <>
+      <style>{`
+        @keyframes twinkle {
+          0%   { opacity:.25; transform: scale(.8); filter: blur(1px); }
+          100% { opacity:1;   transform: scale(1.3); filter: blur(0); }
+        }
+      `}</style>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {stars.map((s) => (
           <div
-            key={index}
-            className="min-h-screen flex items-center justify-center px-4 md:px-8 relative"
+            key={s.id}
+            className="absolute rounded-full"
             style={{
-              opacity:
-                scrollProgress > 0.2 + (index / wishes.length) * 0.8 ? 1 : 0,
-              transition: "opacity 0.6s ease-out",
-            }}
-          >
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `linear-gradient(135deg, rgba(${184 + index * 5}, ${134 - index * 3}, ${134 + index * 2}, 0.05) 0%, rgba(${120 - index * 3}, ${81 + index * 2}, ${169 - index * 1}, 0.05) 100%)`,
-              }}
-            />
-
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-primary/8 blur-3xl" />
-              <div className="absolute bottom-20 right-10 w-40 h-40 rounded-full bg-accent/8 blur-3xl" />
-            </div>
-
-            <div className="max-w-2xl text-center space-y-6 relative z-10">
-              <div className="text-7xl animate-float">{wish.emoji}</div>
-              <h3 className="text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-secondary">
-                {wish.title}
-              </h3>
-              <p className="text-xl md:text-2xl text-foreground/80 leading-relaxed">
-                {wish.content}
-              </p>
-              <div className="pt-8 flex justify-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-primary/50" />
-                <div className="w-2 h-2 rounded-full bg-accent/50" />
-                <div className="w-2 h-2 rounded-full bg-secondary/50" />
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Final message */}
-        <div
-          className="min-h-screen flex items-center justify-center px-4 md:px-8 relative"
-          style={{
-            opacity: scrollProgress > 0.95 ? 1 : 0,
-            transition: "opacity 0.6s ease-out",
-          }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `linear-gradient(135deg, rgba(184, 134, 134, 0.08) 0%, rgba(120, 81, 169, 0.08) 100%)`,
+              left: `${s.left}%`,
+              top: `${s.top}%`,
+              width: s.size,
+              height: s.size,
+              background:
+                "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,200,255,0.6) 40%, rgba(255,255,255,0) 70%)",
+              boxShadow: "0 0 14px rgba(255, 180, 255, 0.85)",
+              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite alternate`,
             }}
           />
-
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute top-20 left-1/4 w-40 h-40 rounded-full bg-primary/10 blur-3xl animate-pulse" />
-            <div
-              className="absolute bottom-20 right-1/4 w-48 h-48 rounded-full bg-accent/10 blur-3xl animate-pulse"
-              style={{ animationDelay: "1s" }}
-            />
-          </div>
-
-          <div className="max-w-2xl text-center space-y-8 relative z-10">
-            <h2 className="text-6xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-secondary">
-              Happy Women Day
-            </h2>
-            <p className="text-2xl text-foreground/80">
-              You are extraordinary, and you deserve to be celebrated every
-              single day.
-            </p>
-            <div className="text-5xl animate-float">💕</div>
-          </div>
-        </div>
+        ))}
       </div>
-    </div>
+    </>
+  );
+}
+
+export default function BookInterface() {
+  return (
+    <section className="relative w-full py-32 md:py-40">
+      <div className="mx-auto flex max-w-5xl flex-col gap-28 px-4 md:gap-36">
+        {wishes.map((wish, i) => (
+          <motion.article
+            key={i}
+            initial={{ opacity: 0, y: 40, scale: 0.98, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            transition={{
+              duration: 0.8,
+              delay: 0.06 * i,
+              type: "spring",
+              stiffness: 160,
+              damping: 22,
+            }}
+            className="relative mx-auto w-full max-w-3xl"
+          >
+            {/* viền gradient + glow */}
+            <div className="p-[2px] rounded-3xl bg-[linear-gradient(90deg,#f472b6,#a78bfa,#fb7185,#f472b6)] bg-[length:200%_100%] animate-[shine_7s_linear_infinite]">
+              <div className="relative rounded-3xl bg-black/45 backdrop-blur-xl p-8 md:p-14 shadow-[0_0_30px_rgba(255,150,255,0.25)] ring-1 ring-white/10">
+                <h2 className="text-center text-4xl md:text-5xl font-extrabold mb-6">
+                  <span className="bg-clip-text text-transparent bg-[linear-gradient(90deg,#f472b6,#fb7185,#a78bfa,#f472b6)] bg-[length:220%_100%] animate-[shine_8s_linear_infinite]">
+                    {wish.title}
+                  </span>
+                </h2>
+                <p className="text-center text-lg md:text-xl text-white/85 leading-relaxed">
+                  {wish.content}
+                </p>
+
+                <Sparkles />
+              </div>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+
+      <style>{`
+        @keyframes shine { 0% {background-position:0% 50%} 100% {background-position:200% 50%} }
+      `}</style>
+    </section>
   );
 }
